@@ -2,7 +2,7 @@
   "name": "Tesla Charging Log",
   "short_name": "Charging Log",
   "description": "Stromkosten für dein Tesla Fahrzeug erfassen und analysieren",
-  "start_url": "./tesla-charging-app.html",
+  "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait-primary",
