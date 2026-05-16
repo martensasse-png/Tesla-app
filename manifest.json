@@ -1,0 +1,20 @@
+{
+  "name": "Tesla Charging Log",
+  "short_name": "Charging Log",
+  "description": "Stromkosten für dein Tesla Fahrzeug erfassen und analysieren",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#ffffff",
+  "theme_color": "#1a1a1a",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%231a1a1a' width='192' height='192'/><polygon fill='white' points='96,24 144,72 144,144 96,168 48,144 48,72'/></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "categories": ["productivity"]
+}

@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="Tesla Charging Logger - Erfasse und analysiere deine Stromkosten">
+    <meta name="theme-color" content="#1a1a1a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Charging Log">
+    
+    <title>Tesla Charging Log</title>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%231a1a1a' width='192' height='192'/><polygon fill='white' points='96,24 144,72 144,144 96,168 48,144 48,72'/></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect fill='%231a1a1a' width='180' height='180' rx='30'/><polygon fill='white' points='90,27 135,72 135,135 90,155 45,135 45,72'/></svg>">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            background: linear-gradient(to bottom right, #f9fafb, #ffffff, #f3f4f6);
+            color: #1a1a1a;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            padding-top: max(0px, env(safe-area-inset-top));
+            padding-left: max(0px, env(safe-area-inset-left));
+            padding-right: max(0px, env(safe-area-inset-right));
+        }
+
+        header {
+            background: #1a1a1a;
+            color: white;
+            padding: 2rem 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .header-content {
+            max-width: 56rem;
+            margin: 0 auto;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header-icon {
+            width: 2rem;
+            height: 2rem;
+            background: white;
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+        }
+
+        h1 {
+            font-size: 1.875rem;
+            font-weight: 300;
+            letter-spacing: 0.15em;
+        }
+
+        .header-subtitle {
+            color: #a3a3a3;
+            font-size: 0.875rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .container {
+            max-width: 56rem;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            padding-bottom: 2rem;
+            flex: 1;
+            width: 100%;
+        }
+
+        .section {
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: #1a1a1a;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid #1a1a1a;
+        }
+
+        .form-box {
+            background: white;
+            border: 2px solid #e5e5e5;
+            padding: 2rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #525252;
+            margin-bottom: 0.5rem;
+        }
+
+        input {
+            padding: 0.75rem 1rem;
+            border: 1px solid #d4d4d4;
+            background: white;
+            font-size: 0.875rem;
+            transition: border-color 0.2s;
+            font-family: inherit;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #1a1a1a;
+        }
+
+        button {
+            padding: 0.75rem 1.5rem;
+            background: #1a1a1a;
+            color: white;
+            border: none;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 100%;
+            font-family: inherit;
+            border-radius: 4px;
+        }
+
+        button:hover {
+            background: #292929;
+        }
+
+        button:active {
+            background: #000;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+        }
+
+        .stat-card {
+            background: white;
+            border: 1px solid #e5e5e5;
+            padding: 1.5rem;
+            transition: box-shadow 0.2s;
+            border-radius: 4px;
+        }
+
+        .stat-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-weight: 600;
+            color: #737373;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 1.875rem;
+            font-weight: 300;
+            color: #1a1a1a;
+            margin-bottom: 0.25rem;
+            word-break: break-word;
+        }
+
+        .stat-unit {
+            font-size: 0.75rem;
+            color: #a3a3a3;
+        }
+
+        .monthly-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .monthly-card {
+            background: white;
+            border-left: 4px solid #1a1a1a;
+            padding: 1.5rem;
+            transition: box-shadow 0.2s;
+            border-radius: 4px;
+        }
+
+        .monthly-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .monthly-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .monthly-name {
+            font-size: 1.125rem;
+            font-weight: 300;
+            letter-spacing: 0.02em;
+            color: #1a1a1a;
+        }
+
+        .monthly-cost-value {
+            font-size: 1.5rem;
+            font-weight: 300;
+            color: #1a1a1a;
+        }
+
+        .monthly-cost-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #a3a3a3;
+        }
+
+        .monthly-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            font-size: 0.875rem;
+        }
+
+        .monthly-stat-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-weight: 600;
+            color: #737373;
+            margin-bottom: 0.25rem;
+        }
+
+        .monthly-stat-value {
+            font-size: 1.25rem;
+            font-weight: 300;
+            color: #1a1a1a;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+        }
+
+        thead tr {
+            border-bottom: 2px solid #1a1a1a;
+        }
+
+        th {
+            text-align: left;
+            padding: 0.75rem 1rem;
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: #1a1a1a;
+        }
+
+        th:nth-child(2), th:nth-child(3), th:nth-child(4) {
+            text-align: right;
+        }
+
+        th:last-child {
+            text-align: center;
+        }
+
+        td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        tbody tr:hover {
+            background: #f9fafb;
+        }
+
+        td:nth-child(2), td:nth-child(3), td:nth-child(4) {
+            text-align: right;
+            font-family: 'Courier New', monospace;
+        }
+
+        td:last-child {
+            text-align: center;
+        }
+
+        .delete-btn {
+            background: none;
+            border: none;
+            color: #a3a3a3;
+            cursor: pointer;
+            padding: 0.25rem 0.5rem;
+            width: auto;
+            font-size: 1rem;
+            transition: color 0.2s;
+        }
+
+        .delete-btn:hover {
+            color: #ef4444;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1.5rem;
+            color: #a3a3a3;
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            background: white;
+            margin-top: 1rem;
+            border-radius: 4px;
+            border: 1px solid #e5e5e5;
+        }
+
+        .install-banner {
+            display: none;
+            background: #1a1a1a;
+            color: white;
+            padding: 1rem;
+            margin: 1rem;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .install-banner.show {
+            display: block;
+        }
+
+        .install-banner button {
+            background: white;
+            color: #1a1a1a;
+            margin-top: 0.5rem;
+            width: auto;
+            padding: 0.5rem 1rem;
+        }
+
+        @media (max-width: 640px) {
+            header {
+                padding: 1.5rem 1rem;
+                margin-bottom: 1.5rem;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .container {
+                padding: 0 1rem;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .monthly-stats {
+                grid-template-columns: 1fr;
+            }
+
+            table {
+                font-size: 0.75rem;
+            }
+
+            th, td {
+                padding: 0.5rem;
+            }
+
+            .form-box {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="install-banner" id="installBanner">
+        <p>App installieren!</p>
+        <button onclick="installApp()">Zur Startseite hinzufügen</button>
+        <button onclick="dismissInstallBanner()" style="background: #404040; color: white; margin-left: 0.5rem;">Abbrechen</button>
+    </div>
+
+    <header>
+        <div class="header-content">
+            <div class="header-title">
+                <div class="header-icon"></div>
+                <h1>TESLA CHARGING LOG</h1>
+            </div>
+            <p class="header-subtitle">Stromeinsätze erfassen • Kosten analysieren</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="section">
+            <h2 class="section-title">Neue Ladung erfassen</h2>
+            <div class="form-box">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="date">Datum</label>
+                        <input type="date" id="date">
+                    </div>
+                    <div class="form-group">
+                        <label for="kwh">kWh</label>
+                        <input type="number" id="kwh" step="0.1" placeholder="z.B. 45.5" inputmode="decimal">
+                    </div>
+                    <div class="form-group">
+                        <label for="pricePerKwh">€/kWh</label>
+                        <input type="number" id="pricePerKwh" step="0.001" placeholder="z.B. 0.28" inputmode="decimal">
+                    </div>
+                    <div class="form-group">
+                        <button onclick="addEntry()">➕ Hinzufügen</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Gesamtstatistiken</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Gesamte Strommenge</div>
+                    <div class="stat-value" id="totalKwh">0.0</div>
+                    <div class="stat-unit">kWh</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Gesamte Kosten</div>
+                    <div class="stat-value" id="totalCost">0.00</div>
+                    <div class="stat-unit">€</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Ø-Preis pro kWh</div>
+                    <div class="stat-value" id="avgPrice">0.000</div>
+                    <div class="stat-unit">€/kWh</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Einträge Gesamt</div>
+                    <div class="stat-value" id="totalEntries">0</div>
+                    <div class="stat-unit">Ladungen</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="monthlySection" style="display: none;">
+            <h2 class="section-title">Monatliche Übersicht</h2>
+            <div class="monthly-grid" id="monthlyGrid"></div>
+        </section>
+
+        <section class="section" id="tableSection" style="display: none;">
+            <h2 class="section-title">Alle Einträge</h2>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Datum</th>
+                            <th>kWh</th>
+                            <th>Kosten</th>
+                            <th>€/kWh</th>
+                            <th>Löschen</th>
+                        </tr>
+                    </thead>
+                    <tbody id="entriesBody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="section" id="emptyState">
+            <div class="empty-state">
+                <div class="empty-icon">📱</div>
+                <p>Noch keine Einträge. Erfasse deine erste Ladung oben!</p>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        let deferredPrompt;
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('installBanner').classList.add('show');
+        });
+
+        function installApp() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('App installiert');
+                    }
+                    deferredPrompt = null;
+                    dismissInstallBanner();
+                });
+            }
+        }
+
+        function dismissInstallBanner() {
+            document.getElementById('installBanner').classList.remove('show');
+        }
+
+        document.getElementById('date').valueAsDate = new Date();
+        let entries = [];
+
+        function loadData() {
+            const saved = localStorage.getItem('teslaChargingData');
+            if (saved) {
+                try {
+                    entries = JSON.parse(saved);
+                    renderData();
+                } catch (e) {
+                    console.error('Error loading data:', e);
+                }
+            }
+        }
+
+        function saveData() {
+            localStorage.setItem('teslaChargingData', JSON.stringify(entries));
+        }
+
+        function addEntry() {
+            const date = document.getElementById('date').value;
+            const kwh = parseFloat(document.getElementById('kwh').value);
+            const pricePerKwh = parseFloat(document.getElementById('pricePerKwh').value);
+
+            if (!date || isNaN(kwh) || isNaN(pricePerKwh) || kwh <= 0 || pricePerKwh <= 0) {
+                alert('Bitte alle Felder mit gültigen Zahlen ausfüllen');
+                return;
+            }
+
+            const totalPrice = kwh * pricePerKwh;
+
+            entries.push({
+                id: Date.now(),
+                date,
+                kwh,
+                pricePerKwh,
+                totalPrice
+            });
+
+            saveData();
+            renderData();
+
+            document.getElementById('date').valueAsDate = new Date();
+            document.getElementById('kwh').value = '';
+            document.getElementById('pricePerKwh').value = '';
+            document.getElementById('kwh').focus();
+        }
+
+        function deleteEntry(id) {
+            entries = entries.filter(e => e.id !== id);
+            saveData();
+            renderData();
+        }
+
+        function getStats() {
+            const totalKwh = entries.reduce((sum, e) => sum + e.kwh, 0);
+            const totalCost = entries.reduce((sum, e) => sum + e.totalPrice, 0);
+            const avgPrice = totalKwh > 0 ? (totalCost / totalKwh).toFixed(3) : '0.000';
+            return { totalKwh: totalKwh.toFixed(1), totalCost: totalCost.toFixed(2), avgPrice };
+        }
+
+        function getMonthlyStats() {
+            const months = {};
+            entries.forEach(entry => {
+                const [year, month] = entry.date.split('-');
+                const key = `${year}-${month}`;
+                if (!months[key]) {
+                    months[key] = { kwh: 0, totalPrice: 0, count: 0 };
+                }
+                months[key].kwh += entry.kwh;
+                months[key].totalPrice += entry.totalPrice;
+                months[key].count += 1;
+            });
+            return months;
+        }
+
+        function formatDate(dateStr) {
+            const date = new Date(dateStr + 'T00:00:00');
+            return date.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        }
+
+        const monthNames = {
+            '01': 'Januar', '02': 'Februar', '03': 'März', '04': 'April',
+            '05': 'Mai', '06': 'Juni', '07': 'Juli', '08': 'August',
+            '09': 'September', '10': 'Oktober', '11': 'November', '12': 'Dezember'
+        };
+
+        function formatMonthName(monthKey) {
+            const [year, month] = monthKey.split('-');
+            return `${monthNames[month]} ${year}`;
+        }
+
+        function renderData() {
+            const stats = getStats();
+            document.getElementById('totalKwh').textContent = stats.totalKwh;
+            document.getElementById('totalCost').textContent = stats.totalCost;
+            document.getElementById('avgPrice').textContent = stats.avgPrice;
+            document.getElementById('totalEntries').textContent = entries.length;
+
+            if (entries.length === 0) {
+                document.getElementById('emptyState').style.display = 'block';
+                document.getElementById('monthlySection').style.display = 'none';
+                document.getElementById('tableSection').style.display = 'none';
+            } else {
+                document.getElementById('emptyState').style.display = 'none';
+                document.getElementById('monthlySection').style.display = 'block';
+                document.getElementById('tableSection').style.display = 'block';
+            }
+
+            const monthlyStats = getMonthlyStats();
+            const sortedMonths = Object.keys(monthlyStats).sort().reverse();
+            const monthlyGrid = document.getElementById('monthlyGrid');
+            monthlyGrid.innerHTML = '';
+
+            sortedMonths.forEach(monthKey => {
+                const stats = monthlyStats[monthKey];
+                const avgPerKwh = stats.kwh > 0 ? (stats.totalPrice / stats.kwh).toFixed(3) : '0.000';
+                
+                const card = document.createElement('div');
+                card.className = 'monthly-card';
+                card.innerHTML = `
+                    <div class="monthly-header">
+                        <h3 class="monthly-name">${formatMonthName(monthKey)}</h3>
+                        <div>
+                            <div class="monthly-cost-value">${stats.totalPrice.toFixed(2)} €</div>
+                        </div>
+                    </div>
+                    <div class="monthly-stats">
+                        <div>
+                            <div class="monthly-stat-label">Strommenge</div>
+                            <div class="monthly-stat-value">${stats.kwh.toFixed(1)} kWh</div>
+                        </div>
+                        <div>
+                            <div class="monthly-stat-label">Ø-Preis/kWh</div>
+                            <div class="monthly-stat-value">${avgPerKwh} €</div>
+                        </div>
+                        <div>
+                            <div class="monthly-stat-label">Ladungen</div>
+                            <div class="monthly-stat-value">${stats.count}</div>
+                        </div>
+                    </div>
+                `;
+                monthlyGrid.appendChild(card);
+            });
+
+            const tbody = document.getElementById('entriesBody');
+            tbody.innerHTML = '';
+            
+            const sorted = [...entries].sort((a, b) => new Date(b.date) - new Date(a.date));
+            sorted.forEach(entry => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${formatDate(entry.date)}</td>
+                    <td>${entry.kwh.toFixed(1)}</td>
+                    <td>${entry.totalPrice.toFixed(2)} €</td>
+                    <td>${entry.pricePerKwh.toFixed(3)} €</td>
+                    <td><button class="delete-btn" onclick="deleteEntry(${entry.id})">🗑️</button></td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('data:application/javascript,' + encodeURIComponent(`
+                self.addEventListener('install', (event) => {
+                    self.skipWaiting();
+                });
+
+                self.addEventListener('activate', (event) => {
+                    event.waitUntil(clients.claim());
+                });
+
+                self.addEventListener('fetch', (event) => {
+                    event.respondWith(
+                        fetch(event.request).catch(() => {
+                            return new Response('Offline');
+                        })
+                    );
+                });
+            `)).catch((err) => {});
+        }
+
+        document.getElementById('pricePerKwh').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addEntry();
+        });
+
+        loadData();
+    </script>
+</body>
+</html>
