@@ -447,8 +447,8 @@
         document.getElementById('entriesSection').style.display = has ? 'block' : 'none';
         document.getElementById('monthlySection').style.display = has ? 'block' : 'none';
 
-        const totalKwh  = entries.reduce((s, e) => s + e.kwh,  0);
-        const totalCost = entries.reduce((s, e) => s + e.cost, 0);
+        const totalKwh  = entries.reduce((s, e) => s + (e.kwh  || 0), 0);
+        const totalCost = entries.reduce((s, e) => s + (e.cost || 0), 0);
         const avgRate   = totalKwh > 0 ? totalCost / totalKwh : null;
 
         document.getElementById('totalKwh').textContent   = fmt(totalKwh, 1);
@@ -461,8 +461,8 @@
         entries.forEach(e => {
             const key = e.date.slice(0, 7);
             if (!byMonth[key]) byMonth[key] = { kwh: 0, cost: 0, count: 0 };
-            byMonth[key].kwh   += e.kwh;
-            byMonth[key].cost  += e.cost;
+            byMonth[key].kwh   += (e.kwh  || 0);
+            byMonth[key].cost  += (e.cost || 0);
             byMonth[key].count += 1;
         });
 
@@ -650,12 +650,13 @@
         }
     }
 
-    // Proxy call (Vercel serverless function)
+    // Direct Tesla Fleet API call (CORS allowed via registered origin)
     async function teslaApi(path, retried = false) {
         const token  = localStorage.getItem('tesla_access_token');
         const region = localStorage.getItem('tesla_region') || 'eu';
+        const base   = teslaApiBase(region);
 
-        const res = await fetch(`/api/proxy?path=${encodeURIComponent(path)}&region=${region}`, {
+        const res = await fetch(`${base}${path}`, {
             headers: { Authorization: `Bearer ${token}` },
         });
 
