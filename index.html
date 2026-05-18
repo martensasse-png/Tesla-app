@@ -669,13 +669,12 @@
         }
     }
 
-    // Direct Tesla Fleet API call (CORS allowed via registered origin)
+    // Route through Vercel proxy (needed for CORS)
     async function teslaApi(path, retried = false) {
         const token  = localStorage.getItem('tesla_access_token');
         const region = localStorage.getItem('tesla_region') || 'eu';
-        const base   = teslaApiBase(region);
 
-        const res = await fetch(`${base}${path}`, {
+        const res = await fetch(`/api/proxy?path=${encodeURIComponent(path)}&region=${region}`, {
             headers: { Authorization: `Bearer ${token}` },
         });
 
