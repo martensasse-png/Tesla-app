@@ -354,7 +354,10 @@
             </div>
             <div class="form-group" style="margin-bottom: 0.6rem">
                 <label for="redirectUriInput">Redirect URI <span style="font-weight:400;text-transform:none">(muss exakt mit Tesla übereinstimmen)</span></label>
-                <input type="url" id="redirectUriInput" placeholder="https://...">
+                <div style="display:flex;gap:0.4rem">
+                    <input type="url" id="redirectUriInput" placeholder="https://..." style="flex:1">
+                    <button class="btn btn-secondary btn-sm" onclick="copyRedirectUri()" style="flex:0 0 auto;white-space:nowrap">Kopieren</button>
+                </div>
                 <p class="hint">Oben automatisch erkannt – nur ändern wenn Tesla einen anderen Wert erwartet.</p>
             </div>
             <div class="form-group" style="margin-bottom: 0.75rem">
@@ -563,11 +566,16 @@
         sessionStorage.setItem('tesla_client_id',   clientId);
         sessionStorage.setItem('tesla_region',      region);
 
+        const audience = region === 'eu'
+            ? 'https://fleet-api.prd.eu.vn.cloud.tesla.com'
+            : 'https://fleet-api.prd.na.vn.cloud.tesla.com';
+
         const params = new URLSearchParams({
             client_id:             clientId,
             redirect_uri:          redirectUri,
             response_type:         'code',
             scope:                 TESLA_SCOPE,
+            audience,
             code_challenge:        challenge,
             code_challenge_method: 'S256',
             state,
@@ -735,6 +743,11 @@
             btn.disabled = false;
             txt.innerHTML = '⚡ Letzte Ladung aus Tesla importieren';
         }
+    }
+
+    function copyRedirectUri() {
+        const val = document.getElementById('redirectUriInput').value;
+        navigator.clipboard.writeText(val).then(() => alert('URL kopiert:\n' + val));
     }
 
     function disconnectTesla() {
