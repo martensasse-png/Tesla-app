@@ -382,7 +382,7 @@
     document.getElementById('date').valueAsDate = new Date();
 
     // Show detected redirect URI and pre-fill the editable field
-    const detectedUri = location.origin + location.pathname;
+    const detectedUri = (location.origin + location.pathname).replace(/\/$/, '');
     document.getElementById('redirectUriDisplay').textContent = detectedUri;
     document.getElementById('redirectUriInput').value =
         localStorage.getItem('tesla_redirect_uri') || detectedUri;
