@@ -332,6 +332,15 @@
 
         <div id="teslaConnectedView" style="display:none">
             <div class="tesla-status connected">✓ Tesla-Konto verbunden</div>
+
+            <div id="registerSection" style="display:none">
+                <p class="hint" style="color:#b45309; margin-bottom:0.6rem">⚠️ Einmalige Registrierung erforderlich. Bitte den <strong>Client Secret</strong> von developer.tesla.com eintragen:</p>
+                <div style="display:flex; gap:0.4rem; margin-bottom:0.5rem">
+                    <input type="password" id="clientSecretInput" placeholder="Client Secret" style="flex:1">
+                    <button class="btn btn-primary btn-sm" onclick="registerPartner()" style="flex:0 0 auto; white-space:nowrap" id="btnRegister">Registrieren</button>
+                </div>
+            </div>
+
             <div class="tesla-actions">
                 <button class="btn btn-secondary btn-sm" onclick="disconnectTesla()">Trennen</button>
             </div>
@@ -744,23 +753,60 @@
         }
     }
 
+    async function registerPartner() {
+        const clientSecret = document.getElementById('clientSecretInput').value.trim();
+        const clientId     = localStorage.getItem('tesla_client_id');
+        const region       = localStorage.getItem('tesla_region') || 'eu';
+        const btn          = document.getElementById('btnRegister');
+
+        if (!clientSecret) { alert('Bitte Client Secret eingeben.'); return; }
+
+        btn.disabled = true;
+        btn.textContent = '…';
+
+        try {
+            const res = await fetch('/api/register', {
+                method:  'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body:    JSON.stringify({ client_id: clientId, client_secret: clientSecret, region }),
+            });
+            const data = await res.json();
+            if (res.ok) {
+                localStorage.setItem('tesla_registered', '1');
+                document.getElementById('registerSection').style.display = 'none';
+                alert('✅ Registrierung erfolgreich! Bitte jetzt oben auf "Letzte Ladung importieren" tippen.');
+            } else {
+                alert('Fehler: ' + (data.error || res.status));
+            }
+        } catch (err) {
+            alert('Netzwerkfehler: ' + err.message);
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'Registrieren';
+        }
+    }
+
     function copyRedirectUri() {
         const val = document.getElementById('redirectUriInput').value;
         navigator.clipboard.writeText(val).then(() => alert('URL kopiert:\n' + val));
     }
 
     function disconnectTesla() {
-        ['tesla_access_token', 'tesla_refresh_token', 'tesla_client_id', 'tesla_region', 'tesla_redirect_uri']
+        ['tesla_access_token', 'tesla_refresh_token', 'tesla_client_id', 'tesla_region', 'tesla_redirect_uri', 'tesla_registered']
             .forEach(k => localStorage.removeItem(k));
         updateTeslaUI();
     }
 
     function updateTeslaUI() {
-        const connected = !!localStorage.getItem('tesla_access_token');
+        const connected   = !!localStorage.getItem('tesla_access_token');
+        const registered  = !!localStorage.getItem('tesla_registered');
         document.getElementById('teslaConnectedView').style.display    = connected ? 'block' : 'none';
         document.getElementById('teslaDisconnectedView').style.display  = connected ? 'none'  : 'block';
         document.getElementById('btnImport').style.display              = connected ? 'flex'  : 'none';
         document.getElementById('headerStatus').classList.toggle('show', connected);
+        if (connected) {
+            document.getElementById('registerSection').style.display = registered ? 'none' : 'block';
+        }
     }
 
     // ── Service Worker ─────────────────────────────────────────────────────────
