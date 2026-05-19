@@ -486,7 +486,7 @@
     // ═══════════════════════════════════════════════════════════════════════════
     const TESLA_AUTH_URL  = 'https://auth.tesla.com/oauth2/v3/authorize';
     const TESLA_TOKEN_URL = 'https://auth.tesla.com/oauth2/v3/token';
-    const TESLA_SCOPE     = 'openid offline_access vehicle_device_data';
+    const TESLA_SCOPE     = 'openid offline_access vehicle_device_data vehicle_charging_cmds';
 
     function teslaApiBase(region) {
         return region === 'eu'
