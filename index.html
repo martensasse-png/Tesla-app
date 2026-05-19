@@ -381,10 +381,8 @@
     // ── Date default ─────────────────────────────────────────────────────────
     document.getElementById('date').valueAsDate = new Date();
 
-    // Normalize redirect URI: strip /index.html and trailing slash
-    const detectedUri = (location.origin + location.pathname)
-        .replace(/\/index\.html$/, '')
-        .replace(/\/$/, '');
+    // Redirect URI must have a path component (Tesla rejects bare domains)
+    const detectedUri = location.origin + '/index.html';
     document.getElementById('redirectUriDisplay').textContent = detectedUri;
     document.getElementById('redirectUriInput').value =
         localStorage.getItem('tesla_redirect_uri') || detectedUri;
