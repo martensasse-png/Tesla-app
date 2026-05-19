@@ -680,31 +680,60 @@
 
             let sessions = [];
             let rawData = null;
+
+            // Helper: extract sessions from any known Tesla response shape
+            function extractSessions(d) {
+                if (!d) return null;
+                // Tesla sometimes double-encodes: response is a JSON string
+                let inner = d?.response;
+                if (typeof inner === 'string') { try { inner = JSON.parse(inner); } catch (_) {} }
+                const candidates = [
+                    inner?.charging_sessions, inner?.sessions, inner?.data,
+                    Array.isArray(inner) ? inner : null,
+                    d?.charging_sessions, d?.sessions, d?.data,
+                    Array.isArray(d) ? d : null,
+                ];
+                return candidates.find(c => Array.isArray(c) && c.length > 0) || null;
+            }
+
+            // Attempt 1: POST with date range (numeric vehicle id)
             try {
-                // Tesla Fleet API charge_history redirects internally to powergate which requires POST
-                rawData = await teslaApi(
-                    `/api/1/vehicles/${vehicle.id}/charge_history`,
-                    false, 'POST',
-                    { start_time: '2026-05-01T00:00:00Z', end_time: '2026-05-31T23:59:59Z' }
-                );
-                // Try all known response structures
-                sessions =
-                    rawData?.response?.charging_sessions ||
-                    rawData?.response?.data ||
-                    rawData?.charging_sessions ||
-                    rawData?.data ||
-                    (Array.isArray(rawData?.response) ? rawData.response : null) ||
-                    (Array.isArray(rawData) ? rawData : null) ||
-                    [];
-            } catch (err) {
-                alert('Ladehistorie nicht verfügbar: ' + err.message);
-                return;
+                rawData = await teslaApi(`/api/1/vehicles/${vehicle.id}/charge_history`,
+                    false, 'POST', { start_time: '2026-05-01T00:00:00Z', end_time: '2026-05-31T23:59:59Z' });
+                sessions = extractSessions(rawData) || [];
+            } catch (_) {}
+
+            // Attempt 2: POST without date range (numeric id)
+            if (!sessions.length) {
+                try {
+                    rawData = await teslaApi(`/api/1/vehicles/${vehicle.id}/charge_history`,
+                        false, 'POST', {});
+                    sessions = extractSessions(rawData) || [];
+                } catch (_) {}
+            }
+
+            // Attempt 3: GET with VIN
+            if (!sessions.length && vehicle.vin) {
+                try {
+                    rawData = await teslaApi(`/api/1/vehicles/${vehicle.vin}/charge_history`);
+                    sessions = extractSessions(rawData) || [];
+                } catch (_) {}
+            }
+
+            // Attempt 4: GET with numeric id
+            if (!sessions.length) {
+                try {
+                    rawData = await teslaApi(`/api/1/vehicles/${vehicle.id}/charge_history`);
+                    sessions = extractSessions(rawData) || [];
+                } catch (err) {
+                    alert('Ladehistorie nicht verfügbar: ' + err.message);
+                    return;
+                }
             }
 
             if (!Array.isArray(sessions) || sessions.length === 0) {
-                // Show raw response for debugging
-                const preview = JSON.stringify(rawData, null, 2).slice(0, 800);
-                alert('Keine Ladevorgänge gefunden.\n\nAPI-Antwort (Debug):\n' + preview);
+                const preview = JSON.stringify(rawData, null, 2).slice(0, 600);
+                alert('Ladehistorie nicht verfügbar.\n\nDas kann passieren wenn:\n• Der Tesla-Entwickler-Account keinen Zugriff auf charge_history hat\n• Das Fahrzeug diesen Endpunkt nicht unterstützt\n\nDebug:\n' + preview);
                 return;
             }
 
