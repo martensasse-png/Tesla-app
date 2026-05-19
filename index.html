@@ -583,15 +583,21 @@
         } catch { return false; }
     }
 
-    async function teslaApi(path, retried = false) {
+    async function teslaApi(path, retried = false, method = 'GET', body = null) {
         const token  = localStorage.getItem('tesla_access_token');
         const region = localStorage.getItem('tesla_region') || 'eu';
-        const res    = await fetch(`/api/proxy?path=${encodeURIComponent(path)}&region=${region}`, {
-            headers: { Authorization: `Bearer ${token}` },
-        });
+        const fetchOpts = {
+            method,
+            headers: {
+                Authorization: `Bearer ${token}`,
+                ...(body ? { 'Content-Type': 'application/json' } : {}),
+            },
+        };
+        if (body) fetchOpts.body = JSON.stringify(body);
+        const res = await fetch(`/api/proxy?path=${encodeURIComponent(path)}&region=${region}`, fetchOpts);
         if (res.status === 401 && !retried) {
             const ok = await refreshAccessToken();
-            if (ok) return teslaApi(path, true);
+            if (ok) return teslaApi(path, true, method, body);
             disconnectTesla();
             throw new Error('Tesla-Anmeldung abgelaufen. Bitte erneut verbinden.');
         }
@@ -674,8 +680,13 @@
 
             let sessions = [];
             try {
-                const data = await teslaApi(`/api/1/vehicles/${vehicle.id}/charge_history`);
-                sessions   = data.response || data.response?.charging_sessions || [];
+                // Tesla Fleet API charge_history redirects internally to powergate which requires POST
+                const data = await teslaApi(
+                    `/api/1/vehicles/${vehicle.id}/charge_history`,
+                    false, 'POST',
+                    { start_time: '2026-05-01T00:00:00Z', end_time: '2026-05-31T23:59:59Z' }
+                );
+                sessions = data.response?.charging_sessions || data.response || [];
             } catch (err) {
                 alert('Ladehistorie nicht verfügbar: ' + err.message);
                 return;
