@@ -1,3 +1,11 @@
+const ALLOWED_REDIRECT_HOSTS = [
+    'fleet-api.prd.eu.vn.cloud.tesla.com',
+    'fleet-api.prd.na.vn.cloud.tesla.com',
+    'powergate.prd.sn.tesla.services',
+    'ownership.tesla.com',
+    'auth.tesla.com',
+];
+
 module.exports = async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
@@ -23,11 +31,32 @@ module.exports = async function handler(req, res) {
         : 'https://fleet-api.prd.na.vn.cloud.tesla.com';
 
     try {
-        const upstream = await fetch(`${base}${path}`, {
-            headers: { Authorization: auth },
-        });
-        const body = await upstream.json();
-        return res.status(upstream.status).json(body);
+        let url = `${base}${path}`;
+        let response;
+        let redirects = 0;
+
+        while (redirects < 5) {
+            response = await fetch(url, {
+                headers: { Authorization: auth },
+                redirect: 'manual',
+            });
+
+            if (response.status >= 300 && response.status < 400) {
+                const location = response.headers.get('location');
+                if (!location) break;
+                const redirectHost = new URL(location).hostname;
+                if (!ALLOWED_REDIRECT_HOSTS.includes(redirectHost)) {
+                    return res.status(502).json({ error: 'Redirect to disallowed host: ' + redirectHost });
+                }
+                url = location;
+                redirects++;
+            } else {
+                break;
+            }
+        }
+
+        const body = await response.json();
+        return res.status(response.status).json(body);
     } catch (err) {
         return res.status(502).json({ error: 'Upstream error', detail: err.message });
     }
