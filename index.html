@@ -37,57 +37,23 @@
         }
 
         .header-content { max-width: 48rem; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
-
         h1 { font-size: 1.2rem; font-weight: 300; letter-spacing: 0.1em; }
-
         .header-subtitle { color: #737373; font-size: 0.7rem; letter-spacing: 0.06em; margin-top: 0.15rem; }
-
         .header-status { font-size: 0.7rem; color: #4ade80; display: none; }
         .header-status.show { display: block; }
 
-        .container {
-            max-width: 48rem;
-            margin: 0 auto;
-            padding: 1rem 1rem 3rem;
-            flex: 1;
-            width: 100%;
-        }
+        .container { max-width: 48rem; margin: 0 auto; padding: 1rem 1rem 3rem; flex: 1; width: 100%; }
 
-        .card {
-            background: white;
-            border-radius: 10px;
-            padding: 1.125rem;
-            margin-bottom: 0.875rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.07);
-        }
+        .card { background: white; border-radius: 10px; padding: 1.125rem; margin-bottom: 0.875rem; box-shadow: 0 1px 3px rgba(0,0,0,0.07); }
 
-        .section-title {
-            font-size: 0.65rem;
-            font-weight: 700;
-            letter-spacing: 0.14em;
-            text-transform: uppercase;
-            color: #a3a3a3;
-            margin-bottom: 0.875rem;
-        }
+        .section-title { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #a3a3a3; margin-bottom: 0.875rem; }
 
         /* Form */
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 0.625rem;
-            margin-bottom: 0.625rem;
-        }
-
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.625rem; margin-bottom: 0.625rem; }
+        .form-grid-2 { display: grid; grid-template-columns: 1fr 2fr; gap: 0.625rem; margin-bottom: 0.625rem; }
         .form-group { display: flex; flex-direction: column; }
 
-        label {
-            font-size: 0.65rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            color: #737373;
-            margin-bottom: 0.3rem;
-        }
+        label { font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: #737373; margin-bottom: 0.3rem; }
 
         input, select {
             padding: 0.6rem 0.7rem;
@@ -123,116 +89,52 @@
 
         .btn:active { opacity: 0.8; }
         .btn:disabled { opacity: 0.5; cursor: default; }
-
         .btn-primary { background: #1a1a1a; color: white; }
-        .btn-tesla { background: #cc0000; color: white; margin-bottom: 0.5rem; }
+        .btn-tesla  { background: #cc0000; color: white; margin-bottom: 0.5rem; }
+        .btn-history { background: #1d4ed8; color: white; margin-bottom: 0.5rem; }
         .btn-secondary { background: #f0f0f0; color: #1a1a1a; }
         .btn-sm { padding: 0.45rem 0.7rem; font-size: 0.8rem; width: auto; }
 
         /* Stats */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 0.75rem;
-        }
-
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.625rem; }
         .stat-item { text-align: center; padding: 0.3rem 0; }
-
-        .stat-value { font-size: 1.625rem; font-weight: 300; color: #1a1a1a; line-height: 1.1; }
-        .stat-label { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.06em; color: #a3a3a3; margin-top: 0.2rem; }
+        .stat-value { font-size: 1.3rem; font-weight: 300; color: #1a1a1a; line-height: 1.1; }
+        .stat-label { font-size: 0.58rem; text-transform: uppercase; letter-spacing: 0.06em; color: #a3a3a3; margin-top: 0.2rem; }
 
         /* Monthly */
-        .month-card {
-            border-left: 3px solid #1a1a1a;
-            padding: 0.7rem 0.875rem;
-            margin-bottom: 0.625rem;
-            background: #fafafa;
-            border-radius: 0 7px 7px 0;
-        }
-
+        .month-card { border-left: 3px solid #1a1a1a; padding: 0.7rem 0.875rem; margin-bottom: 0.625rem; background: #fafafa; border-radius: 0 7px 7px 0; }
         .month-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem; }
         .month-name { font-size: 0.95rem; font-weight: 400; }
         .month-cost { font-size: 1.15rem; font-weight: 300; }
-
-        .month-details {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 0.5rem;
-            font-size: 0.8rem;
-            color: #525252;
-        }
-
-        .month-detail-label { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.05em; color: #a3a3a3; }
+        .month-details { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.4rem; font-size: 0.8rem; color: #525252; }
+        .month-detail-label { font-size: 0.58rem; text-transform: uppercase; letter-spacing: 0.05em; color: #a3a3a3; }
 
         /* Entries */
-        .entry-row {
-            display: flex;
-            align-items: center;
-            padding: 0.55rem 0;
-            border-bottom: 1px solid #f0f0f0;
-            gap: 0.5rem;
-        }
+        .entry-item { padding: 0.625rem 0; border-bottom: 1px solid #f0f0f0; }
+        .entry-item:last-child { border-bottom: none; }
+        .entry-main { display: flex; align-items: center; gap: 0.5rem; }
+        .entry-date { flex: 0 0 5rem; font-size: 0.8rem; color: #525252; }
+        .entry-kwh  { flex: 1; font-size: 0.875rem; font-weight: 500; }
+        .entry-cost { font-size: 0.875rem; }
+        .entry-source { font-size: 0.65rem; }
+        .entry-sub { font-size: 0.72rem; color: #a3a3a3; margin-top: 0.2rem; padding-left: 5.5rem; display: flex; gap: 0.75rem; flex-wrap: wrap; }
+        .entry-sub span { white-space: nowrap; }
+        .entry-address { color: #737373; white-space: normal !important; }
+        .no-price { color: #d97706; font-size: 0.7rem; }
 
-        .entry-row:last-child { border-bottom: none; }
-        .entry-date { flex: 0 0 5.5rem; font-size: 0.8rem; color: #525252; }
-        .entry-kwh { flex: 1; font-size: 0.875rem; font-weight: 500; }
-        .entry-cost { flex: 1; font-size: 0.875rem; text-align: right; }
-        .entry-rate { flex: 0 0 4rem; font-size: 0.72rem; color: #a3a3a3; text-align: right; }
-        .entry-source { font-size: 0.65rem; margin-left: 0.25rem; }
-
-        .btn-delete {
-            background: none;
-            border: none;
-            color: #d4d4d4;
-            cursor: pointer;
-            padding: 0.2rem;
-            font-size: 0.9rem;
-            flex: 0 0 auto;
-            border-radius: 4px;
-            transition: color 0.15s;
-        }
-
+        .btn-delete { background: none; border: none; color: #d4d4d4; cursor: pointer; padding: 0.2rem; font-size: 0.9rem; flex: 0 0 auto; border-radius: 4px; transition: color 0.15s; }
         .btn-delete:active { color: #ef4444; }
 
         /* Tesla section */
-        .tesla-status {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 0.75rem;
-            padding: 0.6rem 0.75rem;
-            border-radius: 7px;
-            font-size: 0.875rem;
-        }
-
+        .tesla-status { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; padding: 0.6rem 0.75rem; border-radius: 7px; font-size: 0.875rem; }
         .tesla-status.connected { background: #f0fdf4; color: #15803d; }
-        .tesla-status.disconnected { background: #fef2f2; color: #dc2626; }
-
         .tesla-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-
-        .setup-steps {
-            font-size: 0.8rem;
-            color: #525252;
-            line-height: 1.6;
-            background: #f9f9f9;
-            border-radius: 7px;
-            padding: 0.75rem;
-            margin-bottom: 0.75rem;
-        }
-
+        .setup-steps { font-size: 0.8rem; color: #525252; line-height: 1.6; background: #f9f9f9; border-radius: 7px; padding: 0.75rem; margin-bottom: 0.75rem; }
         .setup-steps ol { padding-left: 1.25rem; }
-        .setup-steps a { color: #1a1a1a; }
-
-        .setup-steps code {
-            background: #ebebeb;
-            padding: 0.1rem 0.3rem;
-            border-radius: 3px;
-            font-size: 0.75rem;
-        }
-
+        .setup-steps code { background: #ebebeb; padding: 0.1rem 0.3rem; border-radius: 3px; font-size: 0.75rem; }
         .hint { font-size: 0.72rem; color: #a3a3a3; margin-top: 0.4rem; }
 
-        /* Empty state */
+        /* Empty */
         .empty-state { text-align: center; padding: 2rem 1rem; color: #a3a3a3; }
         .empty-state p { font-size: 0.875rem; margin-top: 0.4rem; }
 
@@ -242,7 +144,8 @@
 
         @media (max-width: 400px) {
             .form-grid { grid-template-columns: 1fr 1fr; }
-            .entry-rate { display: none; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .month-details { grid-template-columns: repeat(2, 1fr); }
         }
     </style>
 </head>
@@ -263,8 +166,11 @@
     <!-- Erfassen -->
     <div class="card">
         <div class="section-title">Neue Ladung erfassen</div>
-        <button class="btn btn-tesla" id="btnImport" onclick="importFromTesla()" style="display:none">
+        <button class="btn btn-tesla"   id="btnImport"   onclick="importFromTesla()" style="display:none">
             <span id="importBtnText">⚡ Letzte Ladung aus Tesla importieren</span>
+        </button>
+        <button class="btn btn-history" id="btnHistory"  onclick="importHistory()"   style="display:none">
+            <span id="historyBtnText">📋 Ladehistorie Mai 2026 importieren</span>
         </button>
         <div class="form-grid">
             <div class="form-group">
@@ -280,6 +186,16 @@
                 <input type="number" id="rate" min="0" step="0.001" placeholder="0.28" inputmode="decimal">
             </div>
         </div>
+        <div class="form-grid-2" style="margin-bottom:0.625rem">
+            <div class="form-group">
+                <label for="km">km <span style="font-weight:400;text-transform:none">(optional)</span></label>
+                <input type="number" id="km" min="0" step="0.1" placeholder="182" inputmode="decimal">
+            </div>
+            <div class="form-group">
+                <label for="address">Ladeort <span style="font-weight:400;text-transform:none">(optional)</span></label>
+                <input type="text" id="address" placeholder="z.B. Musterstraße 1, Berlin">
+            </div>
+        </div>
         <button class="btn btn-primary" onclick="addEntry()">+ Ladung speichern</button>
     </div>
 
@@ -290,6 +206,14 @@
             <div class="stat-item">
                 <div class="stat-value" id="totalKwh">0</div>
                 <div class="stat-label">kWh gesamt</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="totalKm">0</div>
+                <div class="stat-label">km gesamt</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="avgConsumption">–</div>
+                <div class="stat-label">kWh/100 km</div>
             </div>
             <div class="stat-item">
                 <div class="stat-value" id="totalCost">0,00 €</div>
@@ -334,7 +258,7 @@
             <div class="tesla-status connected">✓ Tesla-Konto verbunden</div>
 
             <div id="registerSection" style="display:none">
-                <p class="hint" style="color:#b45309; margin-bottom:0.6rem">⚠️ Einmalige Registrierung erforderlich. Bitte den <strong>Client Secret</strong> von developer.tesla.com eintragen:</p>
+                <p class="hint" style="color:#b45309; margin-bottom:0.6rem">⚠️ Einmalige Registrierung erforderlich. Client Secret von developer.tesla.com eintragen:</p>
                 <div style="display:flex; gap:0.4rem; margin-bottom:0.5rem">
                     <input type="password" id="clientSecretInput" placeholder="Client Secret" style="flex:1">
                     <button class="btn btn-primary btn-sm" onclick="registerPartner()" style="flex:0 0 auto; white-space:nowrap" id="btnRegister">Registrieren</button>
@@ -356,7 +280,6 @@
                     <li>Client ID unten eintragen</li>
                 </ol>
             </div>
-
             <div class="form-group" style="margin-bottom: 0.6rem">
                 <label for="clientIdInput">Client ID</label>
                 <input type="text" id="clientIdInput" placeholder="z.B. abc123def456...">
@@ -387,55 +310,48 @@
     const STORAGE_KEY = 'teslaChargingData';
     let entries = [];
 
-    // ── Date default ─────────────────────────────────────────────────────────
     document.getElementById('date').valueAsDate = new Date();
 
-    // Redirect URI must have a path component (Tesla rejects bare domains)
     const detectedUri = location.origin + '/index.html';
     document.getElementById('redirectUriDisplay').textContent = detectedUri;
     document.getElementById('redirectUriInput').value =
         localStorage.getItem('tesla_redirect_uri') || detectedUri;
 
-    // ── Storage helpers ───────────────────────────────────────────────────────
+    // ── Storage ───────────────────────────────────────────────────────────────
     function load() {
         try { entries = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch { entries = []; }
         render();
     }
 
-    function save() {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
-    }
+    function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(entries)); }
 
-    // ── Add / delete entries ──────────────────────────────────────────────────
+    // ── Add / delete ──────────────────────────────────────────────────────────
     function addEntry(prefilled = false) {
-        const dateEl = document.getElementById('date');
-        const kwhEl  = document.getElementById('kwh');
-        const rateEl = document.getElementById('rate');
+        const date = document.getElementById('date').value;
+        const kwh  = parseFloat(document.getElementById('kwh').value.replace(',', '.'));
+        const rate = parseFloat(document.getElementById('rate').value.replace(',', '.'));
+        const km   = parseFloat(document.getElementById('km').value.replace(',', '.')) || null;
+        const addr = document.getElementById('address').value.trim() || null;
 
-        const date = dateEl.value;
-        const kwh  = parseFloat(kwhEl.value.replace(',', '.'));
-        const rate = parseFloat(rateEl.value.replace(',', '.'));
-
-        if (!date || isNaN(kwh) || isNaN(rate) || kwh <= 0 || rate <= 0) {
-            alert('Bitte Datum, kWh und Preis (€/kWh) ausfüllen.');
-            return;
-        }
+        if (!date || isNaN(kwh) || kwh <= 0) { alert('Bitte mindestens Datum und kWh ausfüllen.'); return; }
+        const hasRate = !isNaN(rate) && rate > 0;
 
         entries.push({
-            id: Date.now(),
+            id:      Date.now(),
             date,
             kwh,
-            rate,
-            cost: +(kwh * rate).toFixed(4),
-            source: prefilled ? 'tesla' : 'manual'
+            rate:    hasRate ? rate : 0,
+            cost:    hasRate ? +(kwh * rate).toFixed(4) : 0,
+            km,
+            address: addr,
+            source:  prefilled ? 'tesla' : 'manual'
         });
 
         save();
         render();
-        dateEl.valueAsDate = new Date();
-        kwhEl.value  = '';
-        rateEl.value = '';
-        kwhEl.focus();
+        document.getElementById('date').valueAsDate = new Date();
+        ['kwh', 'rate', 'km', 'address'].forEach(id => document.getElementById(id).value = '');
+        document.getElementById('kwh').focus();
     }
 
     function deleteEntry(id) {
@@ -471,29 +387,35 @@
 
         const totalKwh  = entries.reduce((s, e) => s + (e.kwh  || 0), 0);
         const totalCost = entries.reduce((s, e) => s + (e.cost || 0), 0);
+        const totalKm   = entries.reduce((s, e) => s + (e.km   || 0), 0);
         const avgRate   = totalKwh > 0 ? totalCost / totalKwh : null;
+        const avgCons   = totalKm  > 0 ? (totalKwh / totalKm) * 100 : null;
 
-        document.getElementById('totalKwh').textContent   = fmt(totalKwh, 1);
-        document.getElementById('totalCost').textContent  = fmt(totalCost, 2) + ' €';
-        document.getElementById('avgRate').textContent    = avgRate !== null ? fmt(avgRate, 3) + ' €' : '–';
-        document.getElementById('totalCount').textContent = entries.length;
+        document.getElementById('totalKwh').textContent       = fmt(totalKwh, 1);
+        document.getElementById('totalKm').textContent        = fmt(totalKm, 0);
+        document.getElementById('totalCost').textContent      = fmt(totalCost, 2) + ' €';
+        document.getElementById('avgRate').textContent        = avgRate !== null ? fmt(avgRate, 3) + ' €' : '–';
+        document.getElementById('avgConsumption').textContent = avgCons !== null ? fmt(avgCons, 1) : '–';
+        document.getElementById('totalCount').textContent     = entries.length;
 
         // Monthly
         const byMonth = {};
         entries.forEach(e => {
             const key = e.date.slice(0, 7);
-            if (!byMonth[key]) byMonth[key] = { kwh: 0, cost: 0, count: 0 };
+            if (!byMonth[key]) byMonth[key] = { kwh: 0, cost: 0, km: 0, count: 0 };
             byMonth[key].kwh   += (e.kwh  || 0);
             byMonth[key].cost  += (e.cost || 0);
+            byMonth[key].km    += (e.km   || 0);
             byMonth[key].count += 1;
         });
 
         const mc = document.getElementById('monthlyContainer');
         mc.innerHTML = '';
         Object.keys(byMonth).sort().reverse().forEach(key => {
-            const m = byMonth[key];
-            const avg = m.kwh > 0 ? m.cost / m.kwh : 0;
-            const div = document.createElement('div');
+            const m    = byMonth[key];
+            const avg  = m.kwh > 0 ? m.cost / m.kwh : 0;
+            const cons = m.km  > 0 ? (m.kwh / m.km) * 100 : null;
+            const div  = document.createElement('div');
             div.className = 'month-card';
             div.innerHTML = `
                 <div class="month-header">
@@ -502,41 +424,69 @@
                 </div>
                 <div class="month-details">
                     <div><div class="month-detail-label">Strommenge</div>${fmt(m.kwh, 1)} kWh</div>
+                    <div><div class="month-detail-label">km</div>${fmt(m.km, 0)} km</div>
+                    <div><div class="month-detail-label">kWh/100 km</div>${cons !== null ? fmt(cons, 1) : '–'}</div>
                     <div><div class="month-detail-label">Ø €/kWh</div>${fmt(avg, 3)} €</div>
-                    <div><div class="month-detail-label">Ladevorgänge</div>${m.count}</div>
                 </div>`;
             mc.appendChild(div);
         });
 
-        // Entries list
+        // Entries
         const list = document.getElementById('entriesList');
         list.innerHTML = '';
         [...entries].sort((a, b) => b.date.localeCompare(a.date)).forEach(e => {
-            const sourceIcon = e.source === 'tesla' ? '<span class="entry-source" title="Tesla-Import">⚡</span>' : '';
-            const row = document.createElement('div');
-            row.className = 'entry-row';
-            row.innerHTML = `
-                <span class="entry-date">${fmtDate(e.date)}</span>
-                <span class="entry-kwh">${fmt(e.kwh, 1)} kWh${sourceIcon}</span>
-                <span class="entry-cost">${fmt(e.cost, 2)} €</span>
-                <span class="entry-rate">${fmt(e.rate, 3)} €</span>
-                <button class="btn-delete" onclick="deleteEntry(${e.id})" aria-label="Löschen">✕</button>`;
-            list.appendChild(row);
+            const src  = e.source === 'tesla' ? '⚡' : e.source === 'history' ? '📋' : '';
+            const cons = (e.km && e.km > 0 && e.kwh > 0) ? fmt((e.kwh / e.km) * 100, 1) + ' kWh/100km' : null;
+            const needsPrice = !e.rate || e.rate === 0;
+
+            const item = document.createElement('div');
+            item.className = 'entry-item';
+
+            let subParts = [];
+            if (e.km)      subParts.push(`<span>${fmt(e.km, 0)} km</span>`);
+            if (cons)      subParts.push(`<span>${cons}</span>`);
+            if (e.address) subParts.push(`<span class="entry-address">📍 ${e.address}</span>`);
+
+            item.innerHTML = `
+                <div class="entry-main">
+                    <span class="entry-date">${fmtDate(e.date)}</span>
+                    <span class="entry-kwh">${fmt(e.kwh, 1)} kWh ${src ? `<span class="entry-source">${src}</span>` : ''}</span>
+                    <span class="entry-cost">${needsPrice ? '<span class="no-price">Preis fehlt</span>' : fmt(e.cost, 2) + ' €'}</span>
+                    <button class="btn-delete" onclick="deleteEntry(${e.id})">✕</button>
+                </div>
+                ${subParts.length ? `<div class="entry-sub">${subParts.join('')}</div>` : ''}`;
+            list.appendChild(item);
         });
     }
 
-    // ── Enter key ─────────────────────────────────────────────────────────────
     document.getElementById('rate').addEventListener('keydown', e => {
         if (e.key === 'Enter') addEntry();
     });
 
     // ═══════════════════════════════════════════════════════════════════════════
+    // Geocoding
+    // ═══════════════════════════════════════════════════════════════════════════
+    async function reverseGeocode(lat, lng) {
+        try {
+            const res  = await fetch(
+                `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&zoom=16&accept-language=de`,
+                { headers: { 'User-Agent': 'TeslaChargingLog/1.0' } }
+            );
+            const data = await res.json();
+            const a    = data.address || {};
+            return [a.road, a.house_number, a.city || a.town || a.village || a.municipality]
+                .filter(Boolean).join(', ') || data.display_name || null;
+        } catch { return null; }
+    }
+
+    function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+    // ═══════════════════════════════════════════════════════════════════════════
     // Tesla OAuth (PKCE)
     // ═══════════════════════════════════════════════════════════════════════════
-
-    const TESLA_AUTH_URL   = 'https://auth.tesla.com/oauth2/v3/authorize';
-    const TESLA_TOKEN_URL  = 'https://auth.tesla.com/oauth2/v3/token';
-    const TESLA_SCOPE      = 'openid offline_access vehicle_device_data';
+    const TESLA_AUTH_URL  = 'https://auth.tesla.com/oauth2/v3/authorize';
+    const TESLA_TOKEN_URL = 'https://auth.tesla.com/oauth2/v3/token';
+    const TESLA_SCOPE     = 'openid offline_access vehicle_device_data';
 
     function teslaApiBase(region) {
         return region === 'eu'
@@ -544,53 +494,39 @@
             : 'https://fleet-api.prd.na.vn.cloud.tesla.com';
     }
 
-    // PKCE helpers
     async function generatePKCE() {
         const arr = new Uint8Array(96);
         crypto.getRandomValues(arr);
-        const verifier = btoa(String.fromCharCode(...arr))
-            .replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
-        const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(verifier));
-        const challenge = btoa(String.fromCharCode(...new Uint8Array(digest)))
-            .replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+        const verifier  = btoa(String.fromCharCode(...arr)).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');
+        const digest    = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(verifier));
+        const challenge = btoa(String.fromCharCode(...new Uint8Array(digest))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');
         return { verifier, challenge };
     }
 
     async function connectTesla() {
-        const clientId = document.getElementById('clientIdInput').value.trim();
-        const region   = document.getElementById('regionSelect').value;
-
+        const clientId   = document.getElementById('clientIdInput').value.trim();
+        const region     = document.getElementById('regionSelect').value;
         const redirectUri = document.getElementById('redirectUriInput').value.trim();
 
-        if (!clientId) { alert('Bitte die Client ID eingeben.'); return; }
+        if (!clientId)    { alert('Bitte die Client ID eingeben.'); return; }
         if (!redirectUri) { alert('Bitte die Redirect URI eingeben.'); return; }
 
         localStorage.setItem('tesla_redirect_uri', redirectUri);
 
         const { verifier, challenge } = await generatePKCE();
-        const state = crypto.randomUUID();
+        const state    = crypto.randomUUID();
+        const audience = teslaApiBase(region);
 
-        sessionStorage.setItem('tesla_verifier',    verifier);
-        sessionStorage.setItem('tesla_state',       state);
-        sessionStorage.setItem('tesla_client_id',   clientId);
-        sessionStorage.setItem('tesla_region',      region);
+        sessionStorage.setItem('tesla_verifier',  verifier);
+        sessionStorage.setItem('tesla_state',     state);
+        sessionStorage.setItem('tesla_client_id', clientId);
+        sessionStorage.setItem('tesla_region',    region);
 
-        const audience = region === 'eu'
-            ? 'https://fleet-api.prd.eu.vn.cloud.tesla.com'
-            : 'https://fleet-api.prd.na.vn.cloud.tesla.com';
-
-        const params = new URLSearchParams({
-            client_id:             clientId,
-            redirect_uri:          redirectUri,
-            response_type:         'code',
-            scope:                 TESLA_SCOPE,
-            audience,
-            code_challenge:        challenge,
-            code_challenge_method: 'S256',
-            state,
+        location.href = `${TESLA_AUTH_URL}?` + new URLSearchParams({
+            client_id: clientId, redirect_uri: redirectUri, response_type: 'code',
+            scope: TESLA_SCOPE, audience, code_challenge: challenge,
+            code_challenge_method: 'S256', state,
         });
-
-        location.href = `${TESLA_AUTH_URL}?${params}`;
     }
 
     async function handleOAuthCallback() {
@@ -599,54 +535,33 @@
         const retState = params.get('state');
         if (!code) return;
 
-        // Clean URL immediately
         history.replaceState({}, '', location.pathname);
 
-        const verifier    = sessionStorage.getItem('tesla_verifier');
-        const state       = sessionStorage.getItem('tesla_state');
-        const clientId    = sessionStorage.getItem('tesla_client_id');
-        const region      = sessionStorage.getItem('tesla_region') || 'eu';
-        const redirectUri = localStorage.getItem('tesla_redirect_uri') || location.origin + location.pathname;
+        const verifier   = sessionStorage.getItem('tesla_verifier');
+        const state      = sessionStorage.getItem('tesla_state');
+        const clientId   = sessionStorage.getItem('tesla_client_id');
+        const region     = sessionStorage.getItem('tesla_region') || 'eu';
+        const redirectUri = localStorage.getItem('tesla_redirect_uri') || location.origin + '/index.html';
 
-        if (retState !== state) {
-            alert('Sicherheitsfehler – bitte erneut versuchen.');
-            return;
-        }
+        if (retState !== state) { alert('Sicherheitsfehler – bitte erneut versuchen.'); return; }
 
         try {
             const res = await fetch(TESLA_TOKEN_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: new URLSearchParams({
-                    grant_type:    'authorization_code',
-                    client_id:     clientId,
-                    code,
-                    redirect_uri:  redirectUri,
-                    code_verifier: verifier,
-                }),
+                body: new URLSearchParams({ grant_type: 'authorization_code', client_id: clientId, code, redirect_uri: redirectUri, code_verifier: verifier }),
             });
-
-            if (!res.ok) {
-                const err = await res.json().catch(() => ({}));
-                alert('Anmeldefehler: ' + (err.error_description || res.status));
-                return;
-            }
-
+            if (!res.ok) { const e = await res.json().catch(()=>({})); alert('Anmeldefehler: ' + (e.error_description || res.status)); return; }
             const tokens = await res.json();
             localStorage.setItem('tesla_access_token',  tokens.access_token);
             localStorage.setItem('tesla_refresh_token', tokens.refresh_token);
             localStorage.setItem('tesla_client_id',     clientId);
             localStorage.setItem('tesla_region',        region);
         } catch (err) {
-            alert('Netzwerkfehler bei der Tesla-Anmeldung: ' + err.message);
-            return;
+            alert('Netzwerkfehler: ' + err.message); return;
         } finally {
-            sessionStorage.removeItem('tesla_verifier');
-            sessionStorage.removeItem('tesla_state');
-            sessionStorage.removeItem('tesla_client_id');
-            sessionStorage.removeItem('tesla_region');
+            ['tesla_verifier','tesla_state','tesla_client_id','tesla_region'].forEach(k => sessionStorage.removeItem(k));
         }
-
         updateTeslaUI();
     }
 
@@ -654,54 +569,44 @@
         const refreshToken = localStorage.getItem('tesla_refresh_token');
         const clientId     = localStorage.getItem('tesla_client_id');
         if (!refreshToken || !clientId) return false;
-
         try {
             const res = await fetch(TESLA_TOKEN_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: new URLSearchParams({
-                    grant_type:    'refresh_token',
-                    client_id:     clientId,
-                    refresh_token: refreshToken,
-                }),
+                body: new URLSearchParams({ grant_type: 'refresh_token', client_id: clientId, refresh_token: refreshToken }),
             });
-
             if (!res.ok) return false;
             const tokens = await res.json();
             localStorage.setItem('tesla_access_token', tokens.access_token);
-            if (tokens.refresh_token) {
-                localStorage.setItem('tesla_refresh_token', tokens.refresh_token);
-            }
+            if (tokens.refresh_token) localStorage.setItem('tesla_refresh_token', tokens.refresh_token);
             return true;
-        } catch {
-            return false;
-        }
+        } catch { return false; }
     }
 
-    // Route through Vercel proxy (needed for CORS)
     async function teslaApi(path, retried = false) {
         const token  = localStorage.getItem('tesla_access_token');
         const region = localStorage.getItem('tesla_region') || 'eu';
-
-        const res = await fetch(`/api/proxy?path=${encodeURIComponent(path)}&region=${region}`, {
+        const res    = await fetch(`/api/proxy?path=${encodeURIComponent(path)}&region=${region}`, {
             headers: { Authorization: `Bearer ${token}` },
         });
-
         if (res.status === 401 && !retried) {
             const ok = await refreshAccessToken();
             if (ok) return teslaApi(path, true);
             disconnectTesla();
             throw new Error('Tesla-Anmeldung abgelaufen. Bitte erneut verbinden.');
         }
-
-        if (!res.ok) {
-            const body = await res.json().catch(() => ({}));
-            throw new Error(body.error || `HTTP ${res.status}`);
-        }
-
+        if (!res.ok) { const b = await res.json().catch(()=>({})); throw new Error(b.error || `HTTP ${res.status}`); }
         return res.json();
     }
 
+    async function getFirstVehicle() {
+        const data = await teslaApi('/api/1/vehicles');
+        const v    = data.response?.[0];
+        if (!v) throw new Error('Kein Fahrzeug im Tesla-Konto gefunden.');
+        return v;
+    }
+
+    // ── Import letzte Ladung ──────────────────────────────────────────────────
     async function importFromTesla() {
         const btn = document.getElementById('btnImport');
         const txt = document.getElementById('importBtnText');
@@ -709,26 +614,20 @@
         txt.innerHTML = '<span class="spinner"></span> Lade Daten…';
 
         try {
-            // Get first vehicle
-            const vehiclesData = await teslaApi('/api/1/vehicles');
-            const vehicle = vehiclesData.response?.[0];
-            if (!vehicle) throw new Error('Kein Fahrzeug im Tesla-Konto gefunden.');
-
-            // Fetch charge state (vehicle may be sleeping → 408)
-            let chargeData;
+            const vehicle    = await getFirstVehicle();
+            let   chargeData;
             try {
-                chargeData = await teslaApi(`/api/1/vehicles/${vehicle.id}/vehicle_data?endpoints=charge_state`);
+                chargeData = await teslaApi(`/api/1/vehicles/${vehicle.id}/vehicle_data?endpoints=charge_state,drive_state`);
             } catch (err) {
                 if (err.message.includes('408') || err.message.toLowerCase().includes('sleep')) {
-                    alert('Das Fahrzeug schläft gerade. Bitte kurz die Tesla-App öffnen, um es aufzuwecken, und dann erneut versuchen.');
-                } else {
-                    alert('Fehler: ' + err.message);
-                }
+                    alert('Das Fahrzeug schläft. Bitte kurz die Tesla-App öffnen und dann erneut versuchen.');
+                } else { alert('Fehler: ' + err.message); }
                 return;
             }
 
             const cs = chargeData.response?.charge_state;
-            if (!cs) throw new Error('Keine Ladedaten in der API-Antwort.');
+            const ds = chargeData.response?.drive_state;
+            if (!cs) throw new Error('Keine Ladedaten in der Antwort.');
 
             const kwhAdded = cs.charge_energy_added;
             if (!kwhAdded || kwhAdded <= 0) {
@@ -736,15 +635,22 @@
                 return;
             }
 
-            // Pre-fill form
+            const kmAdded = cs.charge_miles_added_rated ? +(cs.charge_miles_added_rated * 1.60934).toFixed(1) : null;
+            const lat = ds?.latitude;
+            const lng = ds?.longitude;
+
+            txt.innerHTML = '<span class="spinner"></span> Ort wird ermittelt…';
+            const addr = (lat && lng) ? await reverseGeocode(lat, lng) : null;
+
             document.getElementById('date').valueAsDate = new Date();
-            document.getElementById('kwh').value        = kwhAdded.toFixed(2);
-            document.getElementById('rate').value       = '';
+            document.getElementById('kwh').value     = kwhAdded.toFixed(2);
+            document.getElementById('km').value      = kmAdded  ? kmAdded  : '';
+            document.getElementById('address').value = addr     ? addr     : '';
+            document.getElementById('rate').value    = '';
             document.getElementById('rate').focus();
             document.querySelector('.card').scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-            alert(`✅ ${kwhAdded.toFixed(2)} kWh importiert!\nBitte noch den Preis (€/kWh) eingeben und auf „Ladung speichern" tippen.`);
-
+            alert(`✅ ${kwhAdded.toFixed(2)} kWh${kmAdded ? ', ' + fmt(kmAdded, 0) + ' km' : ''}${addr ? '\n📍 ' + addr : ''}\n\nBitte noch den Preis (€/kWh) eingeben.`);
         } catch (err) {
             alert('Fehler: ' + err.message);
         } finally {
@@ -753,37 +659,113 @@
         }
     }
 
+    // ── Import Ladehistorie Mai ───────────────────────────────────────────────
+    async function importHistory() {
+        const btn = document.getElementById('btnHistory');
+        const txt = document.getElementById('historyBtnText');
+
+        if (!confirm('Alle Ladevorgänge vom Mai 2026 werden importiert.\nPreise müssen danach manuell ergänzt werden.\n\nFortfahren?')) return;
+
+        btn.disabled = true;
+
+        try {
+            const vehicle = await getFirstVehicle();
+            txt.innerHTML = '<span class="spinner"></span> Lade Historie…';
+
+            let sessions = [];
+            try {
+                const data = await teslaApi(`/api/1/vehicles/${vehicle.id}/charge_history`);
+                sessions   = data.response || data.response?.charging_sessions || [];
+            } catch (err) {
+                alert('Ladehistorie nicht verfügbar: ' + err.message);
+                return;
+            }
+
+            if (!Array.isArray(sessions) || sessions.length === 0) {
+                alert('Keine Ladehistorie gefunden. Diese Funktion ist nicht bei allen Fahrzeugen verfügbar.');
+                return;
+            }
+
+            // Filter Mai 2026
+            const maySessions = sessions.filter(s => {
+                const ts  = s.charge_start_date_time || s.timestamp || s.start_time || s.date;
+                const d   = ts ? new Date(ts) : null;
+                return d && d.getFullYear() === 2026 && d.getMonth() === 4;
+            });
+
+            if (maySessions.length === 0) {
+                alert('Keine Ladevorgänge im Mai 2026 gefunden.');
+                return;
+            }
+
+            let imported = 0;
+            for (let i = 0; i < maySessions.length; i++) {
+                const s   = maySessions[i];
+                txt.innerHTML = `<span class="spinner"></span> ${i + 1} / ${maySessions.length} wird importiert…`;
+
+                const ts    = s.charge_start_date_time || s.timestamp || s.start_time || s.date;
+                const date  = new Date(ts);
+                const dateStr = date.toISOString().slice(0, 10);
+                const kwh   = s.charge_energy_added || s.energy_added || 0;
+                const miles = s.charge_miles_added_rated || s.miles_added || 0;
+                const km    = miles > 0 ? +(miles * 1.60934).toFixed(1) : null;
+                const lat   = s.latitude  || s.charger_latitude  || s.location?.lat;
+                const lng   = s.longitude || s.charger_longitude || s.location?.lng || s.location?.lon;
+
+                // Duplikat prüfen
+                if (entries.find(e => e.date === dateStr && Math.abs(e.kwh - kwh) < 0.5)) continue;
+
+                let addr = null;
+                if (lat && lng) {
+                    addr = await reverseGeocode(lat, lng);
+                    await delay(1100); // Nominatim: max 1 req/s
+                }
+
+                entries.push({
+                    id:      date.getTime() + i,
+                    date:    dateStr,
+                    kwh,
+                    rate:    0,
+                    cost:    0,
+                    km,
+                    address: addr,
+                    source:  'history'
+                });
+                imported++;
+            }
+
+            save();
+            render();
+            alert(`✅ ${imported} Ladevorgänge importiert.\nPreise (€/kWh) bitte manuell ergänzen – Einträge mit "Preis fehlt" sind markiert.`);
+        } catch (err) {
+            alert('Fehler: ' + err.message);
+        } finally {
+            btn.disabled = false;
+            txt.innerHTML = '📋 Ladehistorie Mai 2026 importieren';
+        }
+    }
+
+    // ── Partner-Registrierung ─────────────────────────────────────────────────
     async function registerPartner() {
         const clientSecret = document.getElementById('clientSecretInput').value.trim();
         const clientId     = localStorage.getItem('tesla_client_id');
         const region       = localStorage.getItem('tesla_region') || 'eu';
         const btn          = document.getElementById('btnRegister');
-
         if (!clientSecret) { alert('Bitte Client Secret eingeben.'); return; }
-
-        btn.disabled = true;
-        btn.textContent = '…';
-
+        btn.disabled = true; btn.textContent = '…';
         try {
-            const res = await fetch('/api/register', {
-                method:  'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body:    JSON.stringify({ client_id: clientId, client_secret: clientSecret, region }),
+            const res  = await fetch('/api/register', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ client_id: clientId, client_secret: clientSecret, region }),
             });
             const data = await res.json();
             if (res.ok) {
                 localStorage.setItem('tesla_registered', '1');
                 document.getElementById('registerSection').style.display = 'none';
-                alert('✅ Registrierung erfolgreich! Bitte jetzt oben auf "Letzte Ladung importieren" tippen.');
-            } else {
-                alert('Fehler: ' + (data.error || res.status));
-            }
-        } catch (err) {
-            alert('Netzwerkfehler: ' + err.message);
-        } finally {
-            btn.disabled = false;
-            btn.textContent = 'Registrieren';
-        }
+                alert('✅ Registrierung erfolgreich!');
+            } else { alert('Fehler: ' + (data.error || res.status)); }
+        } catch (err) { alert('Netzwerkfehler: ' + err.message); }
+        finally { btn.disabled = false; btn.textContent = 'Registrieren'; }
     }
 
     function copyRedirectUri() {
@@ -792,30 +774,29 @@
     }
 
     function disconnectTesla() {
-        ['tesla_access_token', 'tesla_refresh_token', 'tesla_client_id', 'tesla_region', 'tesla_redirect_uri', 'tesla_registered']
+        ['tesla_access_token','tesla_refresh_token','tesla_client_id','tesla_region','tesla_redirect_uri','tesla_registered']
             .forEach(k => localStorage.removeItem(k));
         updateTeslaUI();
     }
 
     function updateTeslaUI() {
-        const connected   = !!localStorage.getItem('tesla_access_token');
-        const registered  = !!localStorage.getItem('tesla_registered');
-        document.getElementById('teslaConnectedView').style.display    = connected ? 'block' : 'none';
-        document.getElementById('teslaDisconnectedView').style.display  = connected ? 'none'  : 'block';
-        document.getElementById('btnImport').style.display              = connected ? 'flex'  : 'none';
+        const connected  = !!localStorage.getItem('tesla_access_token');
+        const registered = !!localStorage.getItem('tesla_registered');
+        document.getElementById('teslaConnectedView').style.display   = connected ? 'block' : 'none';
+        document.getElementById('teslaDisconnectedView').style.display = connected ? 'none'  : 'block';
+        document.getElementById('btnImport').style.display             = connected ? 'flex'  : 'none';
+        document.getElementById('btnHistory').style.display            = connected ? 'flex'  : 'none';
         document.getElementById('headerStatus').classList.toggle('show', connected);
-        if (connected) {
-            document.getElementById('registerSection').style.display = registered ? 'none' : 'block';
-        }
+        if (connected) document.getElementById('registerSection').style.display = registered ? 'none' : 'block';
     }
 
-    // ── Service Worker ─────────────────────────────────────────────────────────
+    // ── Service Worker ────────────────────────────────────────────────────────
     if ('serviceWorker' in navigator && location.protocol !== 'file:') {
         navigator.serviceWorker.register('./sw.js').catch(() => {});
     }
 
-    // ── Init ───────────────────────────────────────────────────────────────────
-    handleOAuthCallback();   // handle ?code= redirect from Tesla
+    // ── Init ──────────────────────────────────────────────────────────────────
+    handleOAuthCallback();
     updateTeslaUI();
     load();
 </script>
