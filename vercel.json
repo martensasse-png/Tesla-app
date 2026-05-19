@@ -1,5 +1,11 @@
 {
   "rewrites": [
     { "source": "/api/:path*", "destination": "/api/:path*" }
+  ],
+  "headers": [
+    {
+      "source": "/.well-known/appspecific/com.tesla.3p.public-key.pem",
+      "headers": [{ "key": "Content-Type", "value": "application/x-pem-file" }]
+    }
   ]
 }
