@@ -23,7 +23,6 @@ module.exports = async function handler(req, res) {
 
     const { path, region } = req.query;
     if (!path) return res.status(400).json({ error: 'Missing path' });
-
     if (!path.startsWith('/api/1/')) {
         return res.status(403).json({ error: 'Forbidden path' });
     }
@@ -32,43 +31,39 @@ module.exports = async function handler(req, res) {
         ? 'https://fleet-api.prd.eu.vn.cloud.tesla.com'
         : 'https://fleet-api.prd.na.vn.cloud.tesla.com';
 
-    // Read body for POST requests (Vercel parses JSON automatically)
-    const reqBody = req.method === 'POST'
-        ? JSON.stringify(req.body || {})
-        : undefined;
-
     try {
+        if (req.method === 'GET') {
+            // GET: use default redirect:follow — this was the working behaviour before
+            const upstream = await fetch(`${base}${path}`, {
+                headers: { Authorization: auth },
+            });
+            const body = await upstream.json();
+            return res.status(upstream.status).json(body);
+        }
+
+        // POST: follow redirects manually so Authorization survives cross-origin hops
+        // (needed for charge_history which redirects to powergate.prd.sn.tesla.services)
+        const reqBody = JSON.stringify(req.body || {});
         let url = `${base}${path}`;
-        let method = req.method;
-        let body = reqBody;
         let response;
         let redirects = 0;
 
         while (redirects < 5) {
-            const fetchOpts = {
-                method,
-                headers: {
-                    Authorization: auth,
-                    ...(body ? { 'Content-Type': 'application/json' } : {}),
-                },
+            response = await fetch(url, {
+                method: 'POST',
+                headers: { Authorization: auth, 'Content-Type': 'application/json' },
+                body: reqBody,
                 redirect: 'manual',
-            };
-            if (body) fetchOpts.body = body;
-
-            response = await fetch(url, fetchOpts);
+            });
 
             if (response.status >= 300 && response.status < 400) {
                 const location = response.headers.get('location');
                 if (!location) break;
-
                 const redirectHost = new URL(location).hostname;
                 if (!ALLOWED_REDIRECT_HOSTS.includes(redirectHost)) {
                     return res.status(502).json({ error: 'Redirect to disallowed host: ' + redirectHost });
                 }
-
                 url = location;
-                // 307/308 preserve method; 301/302 also keep method here since
-                // Tesla's internal powergate service requires POST
                 redirects++;
             } else {
                 break;
