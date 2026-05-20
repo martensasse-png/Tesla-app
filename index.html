@@ -91,7 +91,6 @@
         .btn:disabled { opacity: 0.5; cursor: default; }
         .btn-primary { background: #1a1a1a; color: white; }
         .btn-tesla  { background: #cc0000; color: white; margin-bottom: 0.5rem; }
-        .btn-history { background: #1d4ed8; color: white; margin-bottom: 0.5rem; }
         .btn-secondary { background: #f0f0f0; color: #1a1a1a; }
         .btn-sm { padding: 0.45rem 0.7rem; font-size: 0.8rem; width: auto; }
 
@@ -168,9 +167,6 @@
         <div class="section-title">Neue Ladung erfassen</div>
         <button class="btn btn-tesla"   id="btnImport"   onclick="importFromTesla()" style="display:none">
             <span id="importBtnText">⚡ Letzte Ladung aus Tesla importieren</span>
-        </button>
-        <button class="btn btn-history" id="btnHistory"  onclick="importHistory()"   style="display:none">
-            <span id="historyBtnText">📋 Ladehistorie Mai 2026 importieren</span>
         </button>
         <div class="form-grid">
             <div class="form-group">
@@ -623,7 +619,7 @@
             const vehicle    = await getFirstVehicle();
             let   chargeData;
             try {
-                chargeData = await teslaApi(`/api/1/vehicles/${vehicle.id}/vehicle_data?endpoints=charge_state,drive_state`);
+                chargeData = await teslaApi(`/api/1/vehicles/${vehicle.id}/vehicle_data`);
             } catch (err) {
                 if (err.message.includes('408') || err.message.toLowerCase().includes('sleep')) {
                     alert('Das Fahrzeug schläft. Bitte kurz die Tesla-App öffnen und dann erneut versuchen.');
@@ -665,136 +661,6 @@
         }
     }
 
-    // ── Import Ladehistorie Mai ───────────────────────────────────────────────
-    async function importHistory() {
-        const btn = document.getElementById('btnHistory');
-        const txt = document.getElementById('historyBtnText');
-
-        if (!confirm('Alle Ladevorgänge vom Mai 2026 werden importiert.\nPreise müssen danach manuell ergänzt werden.\n\nFortfahren?')) return;
-
-        btn.disabled = true;
-
-        try {
-            const vehicle = await getFirstVehicle();
-            txt.innerHTML = '<span class="spinner"></span> Lade Historie…';
-
-            let sessions = [];
-            let rawData = null;
-
-            // Helper: extract sessions from any known Tesla response shape
-            function extractSessions(d) {
-                if (!d) return null;
-                // Tesla sometimes double-encodes: response is a JSON string
-                let inner = d?.response;
-                if (typeof inner === 'string') { try { inner = JSON.parse(inner); } catch (_) {} }
-                const candidates = [
-                    inner?.charging_sessions, inner?.sessions, inner?.data,
-                    Array.isArray(inner) ? inner : null,
-                    d?.charging_sessions, d?.sessions, d?.data,
-                    Array.isArray(d) ? d : null,
-                ];
-                return candidates.find(c => Array.isArray(c) && c.length > 0) || null;
-            }
-
-            // Attempt 1: POST with date range (numeric vehicle id)
-            try {
-                rawData = await teslaApi(`/api/1/vehicles/${vehicle.id}/charge_history`,
-                    false, 'POST', { start_time: '2026-05-01T00:00:00Z', end_time: '2026-05-31T23:59:59Z' });
-                sessions = extractSessions(rawData) || [];
-            } catch (_) {}
-
-            // Attempt 2: POST without date range (numeric id)
-            if (!sessions.length) {
-                try {
-                    rawData = await teslaApi(`/api/1/vehicles/${vehicle.id}/charge_history`,
-                        false, 'POST', {});
-                    sessions = extractSessions(rawData) || [];
-                } catch (_) {}
-            }
-
-            // Attempt 3: GET with VIN
-            if (!sessions.length && vehicle.vin) {
-                try {
-                    rawData = await teslaApi(`/api/1/vehicles/${vehicle.vin}/charge_history`);
-                    sessions = extractSessions(rawData) || [];
-                } catch (_) {}
-            }
-
-            // Attempt 4: GET with numeric id
-            if (!sessions.length) {
-                try {
-                    rawData = await teslaApi(`/api/1/vehicles/${vehicle.id}/charge_history`);
-                    sessions = extractSessions(rawData) || [];
-                } catch (err) {
-                    alert('Ladehistorie nicht verfügbar: ' + err.message);
-                    return;
-                }
-            }
-
-            if (!Array.isArray(sessions) || sessions.length === 0) {
-                const preview = JSON.stringify(rawData, null, 2).slice(0, 600);
-                alert('Ladehistorie nicht verfügbar.\n\nDas kann passieren wenn:\n• Der Tesla-Entwickler-Account keinen Zugriff auf charge_history hat\n• Das Fahrzeug diesen Endpunkt nicht unterstützt\n\nDebug:\n' + preview);
-                return;
-            }
-
-            // Filter Mai 2026
-            const maySessions = sessions.filter(s => {
-                const ts  = s.charge_start_date_time || s.timestamp || s.start_time || s.date;
-                const d   = ts ? new Date(ts) : null;
-                return d && d.getFullYear() === 2026 && d.getMonth() === 4;
-            });
-
-            if (maySessions.length === 0) {
-                alert('Keine Ladevorgänge im Mai 2026 gefunden.');
-                return;
-            }
-
-            let imported = 0;
-            for (let i = 0; i < maySessions.length; i++) {
-                const s   = maySessions[i];
-                txt.innerHTML = `<span class="spinner"></span> ${i + 1} / ${maySessions.length} wird importiert…`;
-
-                const ts    = s.charge_start_date_time || s.timestamp || s.start_time || s.date;
-                const date  = new Date(ts);
-                const dateStr = date.toISOString().slice(0, 10);
-                const kwh   = s.charge_energy_added || s.energy_added || 0;
-                const miles = s.charge_miles_added_rated || s.miles_added || 0;
-                const km    = miles > 0 ? +(miles * 1.60934).toFixed(1) : null;
-                const lat   = s.latitude  || s.charger_latitude  || s.location?.lat;
-                const lng   = s.longitude || s.charger_longitude || s.location?.lng || s.location?.lon;
-
-                // Duplikat prüfen
-                if (entries.find(e => e.date === dateStr && Math.abs(e.kwh - kwh) < 0.5)) continue;
-
-                let addr = null;
-                if (lat && lng) {
-                    addr = await reverseGeocode(lat, lng);
-                    await delay(1100); // Nominatim: max 1 req/s
-                }
-
-                entries.push({
-                    id:      date.getTime() + i,
-                    date:    dateStr,
-                    kwh,
-                    rate:    0,
-                    cost:    0,
-                    km,
-                    address: addr,
-                    source:  'history'
-                });
-                imported++;
-            }
-
-            save();
-            render();
-            alert(`✅ ${imported} Ladevorgänge importiert.\nPreise (€/kWh) bitte manuell ergänzen – Einträge mit "Preis fehlt" sind markiert.`);
-        } catch (err) {
-            alert('Fehler: ' + err.message);
-        } finally {
-            btn.disabled = false;
-            txt.innerHTML = '📋 Ladehistorie Mai 2026 importieren';
-        }
-    }
 
     // ── Partner-Registrierung ─────────────────────────────────────────────────
     async function registerPartner() {
@@ -836,7 +702,6 @@
         document.getElementById('teslaConnectedView').style.display   = connected ? 'block' : 'none';
         document.getElementById('teslaDisconnectedView').style.display = connected ? 'none'  : 'block';
         document.getElementById('btnImport').style.display             = connected ? 'flex'  : 'none';
-        document.getElementById('btnHistory').style.display            = connected ? 'flex'  : 'none';
         document.getElementById('headerStatus').classList.toggle('show', connected);
         if (connected) document.getElementById('registerSection').style.display = registered ? 'none' : 'block';
     }
