@@ -403,9 +403,11 @@
 
         const totalKwh  = entries.reduce((s, e) => s + (e.kwh  || 0), 0);
         const totalCost = entries.reduce((s, e) => s + (e.cost || 0), 0);
-        const totalKm   = entries.reduce((s, e) => s + (e.km   || 0), 0);
+        const withKm    = entries.filter(e => e.km > 0);
+        const totalKm   = withKm.reduce((s, e) => s + e.km, 0);
+        const kwhWithKm = withKm.reduce((s, e) => s + (e.kwh || 0), 0);
         const avgRate   = totalKwh > 0 ? totalCost / totalKwh : null;
-        const avgCons   = totalKm  > 0 ? (totalKwh / totalKm) * 100 : null;
+        const avgCons   = totalKm  > 0 ? (kwhWithKm / totalKm) * 100 : null;
 
         document.getElementById('totalKwh').textContent       = fmt(totalKwh, 1);
         document.getElementById('totalKm').textContent        = fmt(totalKm, 0);
@@ -418,11 +420,14 @@
         const byMonth = {};
         entries.forEach(e => {
             const key = e.date.slice(0, 7);
-            if (!byMonth[key]) byMonth[key] = { kwh: 0, cost: 0, km: 0, count: 0 };
-            byMonth[key].kwh   += (e.kwh  || 0);
-            byMonth[key].cost  += (e.cost || 0);
-            byMonth[key].km    += (e.km   || 0);
-            byMonth[key].count += 1;
+            if (!byMonth[key]) byMonth[key] = { kwh: 0, cost: 0, km: 0, kwhWithKm: 0, count: 0 };
+            byMonth[key].kwh      += (e.kwh  || 0);
+            byMonth[key].cost     += (e.cost || 0);
+            byMonth[key].count    += 1;
+            if (e.km > 0) {
+                byMonth[key].km       += e.km;
+                byMonth[key].kwhWithKm += (e.kwh || 0);
+            }
         });
 
         const mc = document.getElementById('monthlyContainer');
@@ -430,7 +435,7 @@
         Object.keys(byMonth).sort().reverse().forEach(key => {
             const m    = byMonth[key];
             const avg  = m.kwh > 0 ? m.cost / m.kwh : 0;
-            const cons = m.km  > 0 ? (m.kwh / m.km) * 100 : null;
+            const cons = m.km  > 0 ? (m.kwhWithKm / m.km) * 100 : null;
             const div  = document.createElement('div');
             div.className = 'month-card';
             div.innerHTML = `
