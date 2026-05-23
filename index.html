@@ -259,10 +259,11 @@
     </div>
 
     <!-- Gespeicherte Ladestationen -->
-    <div class="card" id="stationsSection" style="display:none">
+    <div class="card">
         <div class="section-title">Gespeicherte Ladestationen</div>
-        <p class="hint" style="margin-bottom:0.6rem">Preise werden beim nächsten Laden an dieser Station automatisch vorausgefüllt.</p>
-        <div id="stationsList"></div>
+        <div id="stationsList">
+            <p class="hint" id="stationsEmpty">Noch keine Stationen gespeichert. Importiere eine Ladung aus dem Tesla oder trage einen Eintrag mit Adresse und Preis ein – danach wird der Preis hier hinterlegt.</p>
+        </div>
     </div>
 
     <!-- Datensicherung -->
@@ -413,12 +414,14 @@
         }
     }
     function renderStations() {
-        const section   = document.getElementById('stationsSection');
         const container = document.getElementById('stationsList');
-        if (!section || !container) return;
+        if (!container) return;
         const keys = Object.keys(stationPrices);
-        section.style.display = keys.length > 0 ? 'block' : 'none';
-        container.innerHTML   = '';
+        container.innerHTML = '';
+        if (keys.length === 0) {
+            container.innerHTML = '<p class="hint">Noch keine Stationen gespeichert. Importiere eine Ladung aus dem Tesla oder trage einen Eintrag mit Adresse und Preis ein – danach wird der Preis hier hinterlegt.</p>';
+            return;
+        }
         keys.sort().forEach(addr => {
             const rate = stationPrices[addr];
             const row  = document.createElement('div');
