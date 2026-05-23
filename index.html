@@ -250,6 +250,19 @@
         </div>
     </div>
 
+    <!-- Datensicherung -->
+    <div class="card">
+        <div class="section-title">Datensicherung</div>
+        <p class="hint" style="margin-bottom:0.8rem">Exportiere deine Ladedaten als Datei und importiere sie bei Bedarf wieder (z.B. nach Neuinstallation).</p>
+        <div style="display:flex; gap:0.5rem; flex-wrap:wrap">
+            <button class="btn btn-primary" onclick="exportData()" style="flex:1">⬇ Daten exportieren</button>
+            <label class="btn btn-primary" style="flex:1; text-align:center; cursor:pointer">
+                ⬆ Daten importieren
+                <input type="file" accept=".json" onchange="importData(event)" style="display:none">
+            </label>
+        </div>
+    </div>
+
     <!-- Tesla Integration -->
     <div class="card">
         <div class="section-title">Tesla-Integration</div>
@@ -344,6 +357,41 @@
     }
 
     function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(entries)); }
+
+    function exportData() {
+        const json = JSON.stringify(entries, null, 2);
+        const blob = new Blob([json], { type: 'application/json' });
+        const url  = URL.createObjectURL(blob);
+        const a    = document.createElement('a');
+        const date = new Date().toISOString().slice(0, 10);
+        a.href     = url;
+        a.download = `tesla-ladedaten-${date}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    function importData(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = e => {
+            try {
+                const imported = JSON.parse(e.target.result);
+                if (!Array.isArray(imported)) throw new Error('Ungültiges Format');
+                const before = entries.length;
+                const existingIds = new Set(entries.map(e => e.id));
+                const newEntries  = imported.filter(e => !existingIds.has(e.id));
+                entries = [...entries, ...newEntries];
+                save();
+                render();
+                alert(`✅ Import abgeschlossen:\n${newEntries.length} neue Einträge hinzugefügt${before > 0 && newEntries.length < imported.length ? `\n${imported.length - newEntries.length} bereits vorhandene übersprungen` : ''}.`);
+            } catch (err) {
+                alert('Fehler beim Import: ' + err.message);
+            }
+        };
+        reader.readAsText(file);
+        event.target.value = '';
+    }
 
     // ── Add / delete ──────────────────────────────────────────────────────────
     function addEntry(prefilled = false) {
