@@ -133,6 +133,14 @@
         .setup-steps code { background: #ebebeb; padding: 0.1rem 0.3rem; border-radius: 3px; font-size: 0.75rem; }
         .hint { font-size: 0.72rem; color: #a3a3a3; margin-top: 0.4rem; }
 
+        /* Station prices */
+        .station-row { display: flex; align-items: center; gap: 0.5rem; padding: 0.55rem 0; border-bottom: 1px solid #f0f0f0; }
+        .station-row:last-child { border-bottom: none; }
+        .station-info { flex: 1; min-width: 0; }
+        .station-address { font-size: 0.8rem; color: #1a1a1a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .station-rate { font-size: 0.72rem; color: #a3a3a3; margin-top: 0.1rem; }
+        .rate-hint { font-size: 0.72rem; color: #15803d; margin-top: 0.25rem; }
+
         /* Empty */
         .empty-state { text-align: center; padding: 2rem 1rem; color: #a3a3a3; }
         .empty-state p { font-size: 0.875rem; margin-top: 0.4rem; }
@@ -189,7 +197,7 @@
             </div>
             <div class="form-group">
                 <label for="address">Ladeort <span style="font-weight:400;text-transform:none">(optional)</span></label>
-                <input type="text" id="address" placeholder="z.B. Musterstraße 1, Berlin">
+                <input type="text" id="address" placeholder="z.B. Musterstraße 1, Berlin" onblur="autofillRateFromAddress()">
             </div>
         </div>
         <button class="btn btn-primary" onclick="addEntry()">+ Ladung speichern</button>
@@ -248,6 +256,13 @@
             <div style="font-size:2.5rem">⚡</div>
             <p>Noch keine Einträge. Erfasse deine erste Ladung!</p>
         </div>
+    </div>
+
+    <!-- Gespeicherte Ladestationen -->
+    <div class="card" id="stationsSection" style="display:none">
+        <div class="section-title">Gespeicherte Ladestationen</div>
+        <p class="hint" style="margin-bottom:0.6rem">Preise werden beim nächsten Laden an dieser Station automatisch vorausgefüllt.</p>
+        <div id="stationsList"></div>
     </div>
 
     <!-- Datensicherung -->
@@ -321,6 +336,7 @@
 
 <script>
     const STORAGE_KEY = 'teslaChargingData';
+    const PRICES_KEY  = 'teslaStationPrices';
     let entries = [];
 
     // Historical data from May 2026 (pre-seeded once if app is empty)
@@ -357,6 +373,65 @@
     }
 
     function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(entries)); }
+
+    // ── Station price memory ──────────────────────────────────────────────────
+    let stationPrices = {};
+    function loadStationPrices() {
+        try { stationPrices = JSON.parse(localStorage.getItem(PRICES_KEY) || '{}'); } catch { stationPrices = {}; }
+        renderStations();
+    }
+    function saveStationPrices() {
+        localStorage.setItem(PRICES_KEY, JSON.stringify(stationPrices));
+    }
+    function rememberPrice(address, rate) {
+        if (!address || !rate || rate <= 0) return;
+        const key = address.trim();
+        if (stationPrices[key] === rate) return;
+        stationPrices[key] = rate;
+        saveStationPrices();
+        renderStations();
+    }
+    function deleteStation(address) {
+        delete stationPrices[address];
+        saveStationPrices();
+        renderStations();
+    }
+    function lookupPrice(address) {
+        if (!address) return null;
+        return stationPrices[address.trim()] ?? null;
+    }
+    function autofillRateFromAddress() {
+        const addr = document.getElementById('address').value.trim();
+        const rateField = document.getElementById('rate');
+        if (!rateField.value && addr) {
+            const known = lookupPrice(addr);
+            if (known) {
+                rateField.value = known;
+                rateField.classList.add('rate-hint-active');
+                setTimeout(() => rateField.classList.remove('rate-hint-active'), 2000);
+            }
+        }
+    }
+    function renderStations() {
+        const section   = document.getElementById('stationsSection');
+        const container = document.getElementById('stationsList');
+        if (!section || !container) return;
+        const keys = Object.keys(stationPrices);
+        section.style.display = keys.length > 0 ? 'block' : 'none';
+        container.innerHTML   = '';
+        keys.sort().forEach(addr => {
+            const rate = stationPrices[addr];
+            const row  = document.createElement('div');
+            row.className = 'station-row';
+            row.innerHTML = `
+                <div class="station-info">
+                    <div class="station-address">📍 ${addr}</div>
+                    <div class="station-rate">${rate.toFixed(3).replace('.', ',')} €/kWh</div>
+                </div>
+                <button class="btn-delete" onclick="deleteStation(${JSON.stringify(addr)})" title="Löschen">🗑</button>`;
+            container.appendChild(row);
+        });
+    }
 
     function exportData() {
         const json = JSON.stringify(entries, null, 2);
@@ -415,6 +490,7 @@
             source:  prefilled ? 'tesla' : 'manual'
         });
 
+        if (addr && hasRate) rememberPrice(addr, rate);
         save();
         render();
         document.getElementById('date').valueAsDate = new Date();
@@ -727,15 +803,18 @@
             txt.innerHTML = '<span class="spinner"></span> Ort wird ermittelt…';
             const addr = (lat && lng) ? await reverseGeocode(lat, lng) : null;
 
+            const knownRate = lookupPrice(addr);
+
             document.getElementById('date').valueAsDate = new Date();
             document.getElementById('kwh').value     = kwhAdded.toFixed(2);
-            document.getElementById('km').value      = kmAdded  ? kmAdded  : '';
-            document.getElementById('address').value = addr     ? addr     : '';
-            document.getElementById('rate').value    = '';
+            document.getElementById('km').value      = kmAdded    ? kmAdded    : '';
+            document.getElementById('address').value = addr       ? addr       : '';
+            document.getElementById('rate').value    = knownRate  ? knownRate  : '';
             document.getElementById('rate').focus();
             document.querySelector('.card').scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-            alert(`✅ ${kwhAdded.toFixed(2)} kWh${kmAdded ? ', ' + fmt(kmAdded, 0) + ' km' : ''}${addr ? '\n📍 ' + addr : ''}\n\nBitte noch den Preis (€/kWh) eingeben.`);
+            const rateHint = knownRate ? `\n💡 Preis ${knownRate.toFixed(3)} €/kWh wurde automatisch aus gespeicherter Station übernommen.` : '\n\nBitte noch den Preis (€/kWh) eingeben.';
+            alert(`✅ ${kwhAdded.toFixed(2)} kWh${kmAdded ? ', ' + fmt(kmAdded, 0) + ' km' : ''}${addr ? '\n📍 ' + addr : ''}${rateHint}`);
         } catch (err) {
             alert('Fehler: ' + err.message);
         } finally {
@@ -798,6 +877,7 @@
     handleOAuthCallback();
     updateTeslaUI();
     load();
+    loadStationPrices();
 </script>
 </body>
 </html>
